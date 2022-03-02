@@ -54,7 +54,7 @@ cursor.execute(create_table_cmd)
 with open("./taipei-attractions.json", 'r', encoding="UTF-8") as fin:
     results = json.loads(fin.readline())["result"]["results"]
 
-for i, result in enumerate(results):
+for result in results:
     insert_cmd = '''
         insert into taipei_attractions 
                     (id, name, category, 
@@ -65,6 +65,13 @@ for i, result in enumerate(results):
                     %(description)s, %(address)s, %(transport)s, 
                     %(mrt)s, %(latitude)s, %(longitude)s, %(images)s);
     '''
+
+    images = [f"https://{url}" for url in result["file"].split("https://")[1:]]
+    images = filter(
+        lambda url: url[-3:].lower() == "jpg" or url[-3:].lower() == "png", 
+        images
+    )
+    images = ''.join(images)
     insert_content = {
         "id": result["_id"],
         "name": result["stitle"],
@@ -75,7 +82,7 @@ for i, result in enumerate(results):
         "mrt": result["MRT"],
         "latitude": result["latitude"],
         "longitude": result["longitude"],
-        "images": result["file"]
+        "images": images
     }
     try:
         cursor.execute(insert_cmd, insert_content)

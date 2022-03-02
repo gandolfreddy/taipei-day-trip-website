@@ -115,7 +115,6 @@ def get_attraction_by_id(attractionId):
         abort(400)
 
 
-
 @bp.errorhandler(400)
 def internal_server_error(error):
     error_msg = {
