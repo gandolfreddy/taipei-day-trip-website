@@ -56,14 +56,20 @@ def get_attractions():
     
     query_cmd = '''
         SELECT * FROM taipei_attractions 
-        WHERE locate(%(keyword)s, name);
+        WHERE locate(%(keyword)s, name)
+        LIMIT %(start)s, %(end)s;
     ''' 
     query_content = {
-        "keyword": keyword
+        "keyword": keyword,
+        "start": 12*page,
+        "end": 12*(page+1)+1
     }
-    query_results = query(query_cmd, query_content)[12*page:12*(page+1)]
-    
-    next_page = page+1 if len(query_results)==12 else None
+    query_results = query(query_cmd, query_content)
+    if len(query_results) > 12:
+        next_page = page+1
+        query_results = query_results[:-1]
+    else:
+        next_page = None
     res = {"nextPage": next_page, "data": []}
     for query_result in query_results:
         res["data"].append({
@@ -88,7 +94,8 @@ def get_attraction_by_id(attractionId):
 
     query_cmd = '''
         SELECT * FROM taipei_attractions 
-        WHERE id=%(id)s;
+        WHERE id=%(id)s
+        LIMIT 1;
     ''' 
     query_content = {
         "id": attraction_id
