@@ -1,0 +1,281 @@
+html, body {
+    /* height: 100%; */
+    height: auto;
+}
+
+body {
+    margin: 0px;
+    background-color: #FFFFFF;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navigation*/
+#nav {
+    position: fixed;
+    z-index: 5;
+    width: 100%;
+    height: 54px;
+    background: #FFFFFF;
+    border-bottom: 0.5px solid rgb(206, 206, 206);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#inner-nav {
+    width: 1200px;
+    height: 34px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#inner-nav>a {
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 30px;
+    color: #448899;
+}
+
+#nav-btns>button {
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    color: #666666;
+    
+    border: #FFFFFF;
+    background-color: #FFFFFF;
+}
+
+/* slogan */
+#slogan-box {
+    position: absolute;
+    top: 54px;
+    width: 100%;
+    height: 320px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#slogan {
+    width: 1180px;
+    height: 149px;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#major {
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 28px;
+    color: #F8F8F8;
+    text-shadow: 0px 0px 30px #AABBCC;
+}
+
+#minor {
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    color: #F8F8F8;
+}
+
+#search {
+    display: flex;
+}
+
+#keyword {
+    width: 400px;
+    height: 46px;
+    background: #FFFFFF;
+
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    color: #757575;
+
+    border-radius: 5px 0px 0px 5px;
+    border: none;
+    padding: 0px 15px 0px;
+    margin-right: 0px;
+}
+
+#search-btn {
+    width: 60px;
+    height: 46px;
+    border-radius: 0px 5px 5px 0px;
+    border: none;
+    background: #448899;
+}
+
+
+/* Hero Section */
+#hero-section {
+    position: relative;
+    overflow: hidden;
+    top: 54px;
+    width: 100%;
+    height: 320px;
+    z-index: -1;
+
+    margin-bottom: 50px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #AADDEE 0%, #66AABB 100%);
+}
+
+#hero-section>img {
+    position: absolute;
+    left: 50%;
+}
+
+/* attractions */
+#attractions {
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    margin-top: 50px;
+    margin-bottom: 50px;
+
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+#attractions-group {
+    width: 1200px;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#no-result {
+    display: none;
+
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: #757575;
+}
+
+.item {
+    width: 270px;
+    background: #FFFFFF;
+    border-radius: 5px;
+    border: 0.5px solid rgb(206, 206, 206);
+    margin: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.item>img {
+    width: 100%;
+    height: 160px;
+    margin-bottom: 15px;
+}
+
+#name {
+    margin: 0px 10px 15px;
+
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    color: #757575;
+}
+
+#info {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 10px 15px;
+}
+
+#mrt, #category {
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    color: #757575;
+}
+
+/* footer */
+#footer {
+    height: 104px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #757575;
+}
+
+#text {
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    color: #FFFFFF;
+}
+
+@media (max-width: 1200px) {
+    #inner-nav, #slogan, #attractions {
+        width: 90%;
+    }
+    #hero-section>img {
+        left: 40%;
+    }
+}
+
+@media (max-width: 600px) {
+    #slogan-box, #hero-section {
+        height: 280px;
+    }
+
+    #keyword {
+        width: 230px;
+    }
+
+    #hero-section>img {
+        left: 30%;
+    }
+
+    .item {
+        width: 330px;
+    }
+    
+    .item>img {
+        height: 202px;
+    }
+}
+
+@media (max-width: 360px) {
+    #slogan {
+        width: 340px;
+        height: 169px;
+    }
+
+    #hero-section>img {
+        height: 148px;
+        top: 50%;
+    }
+}
