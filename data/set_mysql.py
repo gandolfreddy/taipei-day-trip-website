@@ -24,7 +24,7 @@ import json
 
 
 CONFIG = {
-    "user": config("USER"),
+    "user": config("MYSQLUSER"),
     "password": config("PASSWORD"),
     "host": config("HOST"),
     "database": config("DATABASE")

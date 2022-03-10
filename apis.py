@@ -8,7 +8,7 @@ import mysql.connector.pooling
 bp = Blueprint("apis_bp", __name__)
 
 CONFIG = {
-    "user": config("USER"),
+    "user": config("MYSQLUSER"),
     "password": config("PASSWORD"),
     "host": config("HOST"),
     "database": config("DATABASE")
@@ -62,7 +62,7 @@ def get_attractions():
     query_content = {
         "keyword": keyword,
         "start": 12*page,
-        "end": 12*(page+1)+1
+        "end": 12+1
     }
     query_results = query(query_cmd, query_content)
     if len(query_results) > 12:
