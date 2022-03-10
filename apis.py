@@ -8,7 +8,7 @@ import mysql.connector.pooling
 bp = Blueprint("apis_bp", __name__)
 
 CONFIG = {
-    "user": config("USER"),
+    "user": config("MYSQLUSER"),
     "password": config("PASSWORD"),
     "host": config("HOST"),
     "database": config("DATABASE")
