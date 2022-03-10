@@ -36,14 +36,15 @@ function queryAttractions(page, keyword) {
         }
         return nextPage;
     }).then((nextPage) => {
-        let timer;
         window.onscroll = function() {
-            clearTimeout(timer);
             let footer = document.querySelector("#footer");
             if (window.scrollY+window.innerHeight>footer.offsetTop && nextPage) {
-                timer = setTimeout(() => {
+                if (!isLoadingPage) {
+                    isLoadingPage = true;
                     queryAttractions(nextPage, keyword);
-                }, 100);
+                }
+            } else {
+                isLoadingPage = false;
             }
         }
     });
@@ -53,7 +54,6 @@ function queryAttractions(page, keyword) {
 function searchKeyword() {
     attractionsGroup.innerHTML = '';
     keyword = keywordInput.value;
-    // keywordInput.value = '';
 
     window.scrollTo(0, 0);
     queryAttractions(page, keyword);
@@ -61,6 +61,7 @@ function searchKeyword() {
 
 
 let page = 0;
+let isLoadingPage = false;
 let keywordInput = document.querySelector("#keyword");
 let noResult = document.querySelector("#no-result");
 let html = document.querySelector("html");
