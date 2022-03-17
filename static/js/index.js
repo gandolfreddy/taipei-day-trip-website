@@ -10,8 +10,8 @@ function queryAttractions(page, keyword) {
     fetch(url).then((response) => {
         return response.json();
     }).then((dataJson) => {
-        data = dataJson.data;
-        nextPage = dataJson.nextPage;
+        let data = dataJson.data;
+        let nextPage = dataJson.nextPage;
 
         if (!data.length) {
             attractionsGroup.style.display = "none";
@@ -24,26 +24,27 @@ function queryAttractions(page, keyword) {
         attractionsGroup.style.display = "flex";
         for (let item of data) {
             attractionsGroup.innerHTML += `
-            <div class="item">
+            <a href="/attraction/${item.id}" class="item">
                 <img src=${item.images[0]}>
                 <div id="name">${item.name}</div>
                 <div id="info">
                     <div id="mrt">${item.mrt}</div>
                     <div id="category">${item.category}</div>
                 </div>
-            </div>
+            </a>
             `;
         }
         return nextPage;
     }).then((nextPage) => {
-        let timer;
         window.onscroll = function() {
-            clearTimeout(timer);
             let footer = document.querySelector("#footer");
             if (window.scrollY+window.innerHeight>footer.offsetTop && nextPage) {
-                timer = setTimeout(() => {
+                if (!isLoadingPage) {
+                    isLoadingPage = true;
                     queryAttractions(nextPage, keyword);
-                }, 100);
+                }
+            } else {
+                isLoadingPage = false;
             }
         }
     });
@@ -53,7 +54,6 @@ function queryAttractions(page, keyword) {
 function searchKeyword() {
     attractionsGroup.innerHTML = '';
     keyword = keywordInput.value;
-    // keywordInput.value = '';
 
     window.scrollTo(0, 0);
     queryAttractions(page, keyword);
@@ -61,6 +61,7 @@ function searchKeyword() {
 
 
 let page = 0;
+let isLoadingPage = false;
 let keywordInput = document.querySelector("#keyword");
 let noResult = document.querySelector("#no-result");
 let html = document.querySelector("html");

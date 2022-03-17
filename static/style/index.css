@@ -34,6 +34,10 @@ body {
     align-items: center;
 }
 
+a {
+    text-decoration: none;
+}
+
 #inner-nav>a {
     font-family: "Noto Sans TC";
     font-style: normal;
