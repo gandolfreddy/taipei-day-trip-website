@@ -85,4 +85,42 @@ let previousImgNumber = 0;
 let currentImgNumber = 0;
 let href = window.location.href.split('/');
 let urlId = href.pop();
+
+let dialogSection = document.querySelector("#dialog-section");
+let dialogSignup = document.querySelector("#dialog-signup");
+let dialogSignin = document.querySelector("#dialog-signin");
+
+let signinClose = document.querySelector("#signin-close");
+signinClose.addEventListener("click", function() {
+    dialogSection.style.display = "none";
+});
+
+let signupClose = document.querySelector("#signup-close");
+signupClose.addEventListener("click", function() {
+    dialogSection.style.display = "none";
+});
+
+let btnSigninNSignup = document.querySelector("#btn-signin-n-signup");
+btnSigninNSignup.addEventListener("click", function() {
+    dialogSection.style.display = "flex";
+    dialogSignin.style.animationName = "signin-block";
+    dialogSignin.style.animationDuration = "1s";
+    dialogSignin.style.display = "block";
+    dialogSignup.style.display = "none";
+    
+});
+
+let changeToSignupText = document.querySelector("#change-to-signup-text");
+changeToSignupText.addEventListener("click", function() {
+    dialogSignin.style.display = "none";
+    dialogSignup.style.display = "block";
+});
+
+let changeToSigninText = document.querySelector("#change-to-signin-text");
+changeToSigninText.addEventListener("click", function() {
+    dialogSignin.style.animationName = "none";
+    dialogSignin.style.display = "block";
+    dialogSignup.style.display = "none";
+});
+
 queryAttraction(urlId);
