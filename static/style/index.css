@@ -166,6 +166,23 @@ body {
     margin-bottom: 10px;
 }
 
+#signin-msg, #signup-msg {
+    width: 310px;
+    height: 22px;
+
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+
+    display: none;
+}
+
 #change-to-signup-text, #change-to-signin-text {
     width: 310px;
     height: 22px;
