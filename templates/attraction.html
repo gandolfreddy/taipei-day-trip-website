@@ -10,12 +10,49 @@
 </head>
 
 <body>
+    <div id="dialog-section">
+        <div id="dialog-mask"></div>
+        <div id="dialog-signin">
+            <div class="decorator-bar"></div>
+            <div id="signin-close">
+                <img src="{{url_for('static', filename='assets/icon_close.png')}}">
+            </div>
+            <div id="signin-main">
+                <div class="dialog-title">登入會員帳號</div>
+                <div id="signin-form" action="">
+                    <input id="signin-email" type="text" placeholder="輸入電子信箱" required>
+                    <input id="signin-pswd" type="password" placeholder="輸入密碼" required>
+                    <button id="signin-button">登入帳戶</button>
+                </div>
+                <div id="signin-msg"></div>
+                <div id="change-to-signup-text">還沒有帳戶？點此註冊</div>
+            </div>
+        </div>
+        <div id="dialog-signup">
+            <div class="decorator-bar"></div>
+            <div id="signup-close">
+                <img src="{{url_for('static', filename='assets/icon_close.png')}}">
+            </div>
+            <div id="signup-main">
+                <div class="dialog-title">註冊會員帳號</div>
+                <div id="signup-form">
+                    <input id="signup-name" type="text" placeholder="輸入姓名" required>
+                    <input id="signup-email" type="text" placeholder="輸入電子郵件" required>
+                    <input id="signup-pswd" type="password" placeholder="輸入密碼" required>
+                    <button id="signup-button">註冊新帳戶</button>
+                </div>
+                <div id="signup-msg"></div>
+                <div id="change-to-signin-text">已經有帳戶了？點此登入</div>
+            </div>
+        </div>
+    </div>
+    
     <div id="nav">
         <div id="inner-nav">
             <a href="/">台北一日遊</a>
             <div id="nav-btns">
                 <button>預定行程</button>
-                <button>登入/註冊</button>
+                <button id="btn-signin-n-signup">登入/註冊</button>
             </div>
         </div>
     </div>

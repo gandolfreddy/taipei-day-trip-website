@@ -1,7 +1,6 @@
 from decouple import config
-from flask import Blueprint, jsonify
-from flask import request
-from flask import abort
+from flask import abort, Blueprint, jsonify, \
+                  make_response, request, session
 import mysql.connector.pooling
 
 
@@ -119,14 +118,114 @@ def get_attraction_by_id(attractionId):
         
         return jsonify(res)
     else:
-        abort(400)
+        abort(400, {"msg": "景點編號不正確"})
+
+
+@bp.route("/api/user", methods=["GET"])
+def get_signin_info():
+    is_logging_in = session.get("is_logging_in", False)
+    data = {"data": None}
+    if is_logging_in:
+        data["data"] = {
+            "id": session["id"],
+            "name": session["name"],
+            "email": session["username"]
+        }
+    response = make_response(jsonify(data), 200)   
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@bp.route("/api/user", methods=["POST"])
+def signup_new_user():
+    req = request.json
+    name = req["name"]
+    email = req["email"]
+    pswd = req["password"]
+
+    if not (name and email and pswd):
+        abort(400, {"msg": "資料填寫不完整"})
+
+    query_cmd = '''
+        SELECT *
+        FROM member 
+        WHERE username=%(username)s;
+    ''' 
+    query_content = {
+        "username": email
+    }
+    query_result = query(query_cmd, query_content)
+    if not query_result:
+        insert_cmd = '''
+        INSERT INTO member (name, username, password) 
+                    values (%(name)s, %(username)s, %(password)s);
+        ''' 
+        insert_content = {
+            "name": name,
+            "username": email,
+            "password": pswd
+        }
+        update(insert_cmd, insert_content)
+        response = make_response(jsonify({"ok": True}), 200)   
+        response.headers["Content-Type"] = "application/json"
+        return response
+    else:
+        abort(400, {"msg": "此 Email 已註冊過帳戶"})
+
+
+@bp.route("/api/user", methods=["PATCH"])
+def signin_user():
+    req = request.json
+    email = req["email"]
+    pswd = req["password"]
+
+    if not (email and pswd):
+        abort(400, {"msg": "請輸入帳號及密碼"})
+
+    query_cmd = '''
+        SELECT id, name, username, password
+        FROM member 
+        WHERE username=%(username)s;
+    ''' 
+    query_content = {
+        "username": email,
+    }
+    query_result = query(query_cmd, query_content)
+    if not query_result:
+        abort(400, {"msg": "查無此帳號，請重新輸入"})
+    else:
+        q_id, q_name, q_acct, q_pswd = query_result[0]
+
+        if q_pswd != pswd:
+            abort(400, {"msg": "密碼錯誤，請重新輸入"})
+        else:
+            session["id"] = q_id
+            session["name"] = q_name
+            session["username"] = q_acct
+            session["is_logging_in"] = True
+
+            response = make_response(jsonify({"ok": True}), 200)   
+            response.headers["Content-Type"] = "application/json"
+            return response
+
+
+@bp.route("/api/user", methods=["DELETE"])
+def logout_user():
+    session["id"] = ''
+    session["name"] = ''
+    session["username"] = ''
+    session["is_logging_in"] = False
+
+    response = make_response(jsonify({"ok": True}), 200)   
+    response.headers["Content-Type"] = "application/json"
+    return response
 
 
 @bp.errorhandler(400)
 def internal_server_error(error):
     error_msg = {
         "error": True,
-        "message": "景點編號不正確"
+        "message": error.description["msg"]
     }
     return error_msg
 

@@ -79,10 +79,155 @@ function changeImageRight() {
 }
 
 
+function checkLoginStatus() {
+    fetch("/api/user").then((response) => {
+        return response.json();
+    }).then((dataJson) => {
+        let data = dataJson.data;
+        
+        let btnSigninNSignup = document.querySelector("#btn-signin-n-signup");
+        if (data == null) {
+            btnSigninNSignup.textContent = "登入/註冊";
+        } else {
+            btnSigninNSignup.textContent = "登出系統";
+        }
+    });
+}
+
+
+function signUp() {
+    let name = document.querySelector("#signup-name").value;
+    let email = document.querySelector("#signup-email").value;
+    let pswd = document.querySelector("#signup-pswd").value;
+
+    let data = {
+        "name": name,
+        "email": email,
+        "password": pswd
+    };
+    
+    fetch("/api/user", {
+        method: "POST",
+        headers: new Headers({"Content-Type": "application/json"}),
+        body: JSON.stringify(data)
+    }).then((response) => {
+        return response.json();
+    }).then((dataJson) => {
+        dialogSignup.style.height = "364px";
+        signupMsg.style.display = "flex";
+        if (dataJson["error"]) {
+            signupMsg.textContent = dataJson["message"];
+            signupMsg.style.color = "red";
+        } else {
+            signupMsg.textContent = "註冊成功！！";
+            signupMsg.style.color = "green";
+        }
+    });
+}
+
+
+function signIn() {
+    let email = document.querySelector("#signin-email").value;
+    let pswd = document.querySelector("#signin-pswd").value;
+
+    let data = {
+        "email": email,
+        "password": pswd
+    };
+    
+    fetch("/api/user", {
+        method: "PATCH",
+        headers: new Headers({"Content-Type": "application/json"}),
+        body: JSON.stringify(data)
+    }).then((response) => {
+        return response.json();
+    }).then((dataJson) => {
+        dialogSignin.style.height = "307px";
+        signinMsg.style.display = "flex";
+        if (dataJson["error"]) {
+            signinMsg.textContent = dataJson["message"];
+            signinMsg.style.color = "red";
+        } else {
+            window.location.reload();
+        }
+    });
+}
+
+
+function logOut() {
+    fetch("/api/user", {
+        method: "DELETE",
+    }).then((response) => {
+        return response.json();
+    }).then((dataJson) => {
+        if (dataJson.ok)
+            window.location.reload();
+    });
+}
+
+
 let images = null;
 let imageLength = 0;
 let previousImgNumber = 0;
 let currentImgNumber = 0;
 let href = window.location.href.split('/');
 let urlId = href.pop();
+
+let dialogSection = document.querySelector("#dialog-section");
+let dialogSignup = document.querySelector("#dialog-signup");
+let dialogSignin = document.querySelector("#dialog-signin");
+let signupMsg = document.querySelector("#signup-msg");
+let signinMsg = document.querySelector("#signin-msg");
+
+let signinClose = document.querySelector("#signin-close");
+signinClose.addEventListener("click", function() {
+    dialogSection.style.display = "none";
+    dialogSignin.style.height = "275px";
+    signinMsg.style.display = "none";
+});
+
+let signupClose = document.querySelector("#signup-close");
+signupClose.addEventListener("click", function() {
+    dialogSection.style.display = "none";
+    dialogSignup.style.height = "332px";
+    signupMsg.style.display = "none";
+});
+
+let btnSigninNSignup = document.querySelector("#btn-signin-n-signup");
+btnSigninNSignup.addEventListener("click", function() {
+    if (btnSigninNSignup.textContent === "登入/註冊") {
+        dialogSection.style.display = "flex";
+        dialogSignin.style.animationName = "signin-block";
+        dialogSignin.style.animationDuration = "1s";
+        dialogSignin.style.display = "block";
+        dialogSignup.style.display = "none";
+    } else {
+        logOut();
+    }
+});
+
+let changeToSignupText = document.querySelector("#change-to-signup-text");
+changeToSignupText.addEventListener("click", function() {
+    dialogSignin.style.display = "none";
+    dialogSignup.style.display = "block";
+    dialogSignup.style.height = "332px";
+    signupMsg.style.display = "none";
+});
+
+let changeToSigninText = document.querySelector("#change-to-signin-text");
+changeToSigninText.addEventListener("click", function() {
+    dialogSignin.style.animationName = "none";
+    dialogSignin.style.display = "block";
+    dialogSignup.style.display = "none";
+    dialogSignin.style.height = "275px";
+    signinMsg.style.display = "none";
+});
+
+let signupButton = document.querySelector("#signup-button");
+signupButton.addEventListener("click", signUp);
+
+let signinButton = document.querySelector("#signin-button");
+signinButton.addEventListener("click", signIn);
+
+checkLoginStatus()
 queryAttraction(urlId);

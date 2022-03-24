@@ -11,10 +11,180 @@ body {
     align-items: center;
 }
 
+/* dialog-section */
+#dialog-section {
+    position: fixed;
+    z-index: 2;
+    height: 100%;
+    width: 100%;
+
+    /* display: flex; */
+    justify-content: center;
+
+    display: none;
+}
+
+#dialog-mask {
+    position: fixed;
+    z-index: 2;
+    height: 100%;
+    width: 100%;
+    animation-name: mask;
+    animation-duration: 0.1s;
+    background-color: rgba(0, 0, 0, .25);
+}
+
+@keyframes mask {
+    from {opacity: 0;}
+    to {opacity: 0.25;}
+}
+
+#dialog-signin {
+    position: fixed;
+    z-index: 3;
+    top: 80px;
+    width: 340px;
+    height: 275px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 60px #AAAAAA;
+    border-radius: 6px;
+}
+
+@keyframes signin-block {
+    from {
+        display: none;
+        top: 30px;
+        opacity: 0.2;
+    }
+    to {
+        display: block;
+        top: 80px;
+    }
+}
+
+#dialog-signup {
+    position: fixed;
+    z-index: 3;
+    top: 80px;
+    width: 340px;
+    height: 332px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 60px #AAAAAA;
+    border-radius: 6px;
+    display: none;
+}
+
+.decorator-bar {
+    width: 340px;
+    height: 10px;
+    background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+    border-radius: 6px 6px 0px 0px;
+}
+
+#signin-close, #signup-close {
+    position: absolute;
+    z-index: 4;
+    width: 30px;
+    height: 30px;
+    top: 20px;
+    left: 310px;
+}
+
+#signin-main, #signup-main {
+    position: absolute;
+    width: 310px;
+    height: 235px;
+    left: 15px;
+    top: 25px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dialog-title {
+    width: 310px;
+    height: 27px;
+    
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    
+    color: #666666;    
+}
+
+#signin-form, #signup-form{
+    display: flex;
+    flex-direction: column;
+}
+
+#signin-email, #signin-pswd, 
+#signup-name, #signup-email, #signup-pswd {
+    width: 310px;
+    height: 47px;
+    
+    background: #FFFFFF;    
+    border: 1px solid #CCCCCC;
+    box-sizing: border-box;
+    border-radius: 5px;
+
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    color: #666666;
+
+    padding: 0px 15px 0px;
+
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#signin-button, #signup-button {
+    width: 310px;
+    height: 47px;
+    background: #448899;
+    border: none;
+    border-radius: 5px;
+    
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 19px;
+    color: #FFFFFF;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+#change-to-signup-text, #change-to-signin-text {
+    width: 310px;
+    height: 22px;
+
+    font-family: "Noto Sans TC";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    color: #666666;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Navigation*/
 #nav {
     position: fixed;
-    z-index: 5;
+    z-index: 1;
     width: 100%;
     height: 54px;
     background: #FFFFFF;
