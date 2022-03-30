@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taipei trip 台北一日遊</title>
+    <link rel="stylesheet" href="static/style/booking.css">
+</head>
+
+<body>
+    <div id="dialog-section">
+        <div id="dialog-mask"></div>
+        <div id="dialog-signin">
+            <div class="decorator-bar"></div>
+            <div id="signin-close">
+                <img src="{{url_for('static', filename='assets/icon_close.png')}}">
+            </div>
+            <div id="signin-main">
+                <div class="dialog-title">登入會員帳號</div>
+                <div id="signin-form">
+                    <input id="signin-email" type="text" placeholder="輸入電子信箱" required>
+                    <input id="signin-pswd" type="password" placeholder="輸入密碼" required>
+                    <button id="signin-button">登入帳戶</button>
+                </div>
+                <div id="signin-msg"></div>
+                <div id="change-to-signup-text">還沒有帳戶？點此註冊</div>
+            </div>
+        </div>
+        <div id="dialog-signup">
+            <div class="decorator-bar"></div>
+            <div id="signup-close">
+                <img src="{{url_for('static', filename='assets/icon_close.png')}}">
+            </div>
+            <div id="signup-main">
+                <div class="dialog-title">註冊會員帳號</div>
+                <div id="signup-form">
+                    <input id="signup-name" type="text" placeholder="輸入姓名" required>
+                    <input id="signup-email" type="text" placeholder="輸入電子郵件" required>
+                    <input id="signup-pswd" type="password" placeholder="輸入密碼" required>
+                    <button id="signup-button">註冊新帳戶</button>
+                </div>
+                <div id="signup-msg"></div>
+                <div id="change-to-signin-text">已經有帳戶了？點此登入</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="nav">
+        <div id="inner-nav">
+            <a href="/">台北一日遊</a>
+            <div id="nav-btns">
+                <button id="btn-booking">預定行程</button>
+                <button id="btn-signin-n-signup">登入/註冊</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="headline">您好，User，待預定的行程如下：</div>
+
+    <div id="empty-state">目前沒有任何待預訂的行程</div>
+
+    <div id="section">
+        <div id="picture">
+            <img src= "https://www.travel.taipei/d_upload_ttn/sceneadmin/pic/11000340.jpg">
+        </div>
+        <div id="infor">
+            <div id="infor-title">台北一日遊：平安鐘</div>
+            <div class="infor-content" id="infor-date"><span>日期：</span>2021-04-23</div>
+            <div class="infor-content" id="infor-time"><span>時間：</span>上半天</div>
+            <div class="infor-content" id="infor-cost"><span>費用：</span>新台幣 2000 元</div>
+            <div class="infor-content" id="infor-location"><span>地點：</span>臺北市 大安區忠孝東路 4 段</div>
+        </div>
+        <div id="icon-delete">
+            <img src="{{url_for('static', filename='assets/icon_delete.png')}}">
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="contact-form">
+        <div id="contact-title">您的聯絡資訊</div>
+        <div class="contact-content" id="contact-name">
+            <span>聯絡姓名：</span><input type="text">
+        </div>
+        <div class="contact-content" id="contact-email">
+            <span>連絡信箱：</span><input type="text">
+        </div>
+        <div class="contact-content" id="contact-phone">
+            <span>手機號碼：</span><input type="text">
+        </div>
+        <div id="contact-notice">請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</div>
+    </div>
+
+    <hr>
+
+    <div id="payment">
+        <div id="payment-title">信用卡付款資訊</div>
+        <div class="payment-content" id="payment-credit-card">
+            <span>卡片號碼：</span><input type="text" placeholder="**** **** **** ****">
+        </div>
+        <div class="payment-content" id="payment-due">
+            <span>過期時間：</span><input type="text" placeholder="MM / YY">
+        </div>
+        <div class="payment-content" id="payment-verify">
+            <span>手機號碼：</span><input type="text" placeholder="CVV">
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="confirm">
+        <div id="confirm-total">總價：新台幣 2000 元</div>
+        <button id="confirm-btn">確定訂購並付款</button>
+    </div>
+
+    <div id="footer">
+        <div id="text">COPYRIGHT © 2021 台北一日遊</div>
+    </div>
+</body>
+
+<script src="static/js/booking.js"></script>
+
+
+</html>

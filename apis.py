@@ -2,6 +2,7 @@ from decouple import config
 from flask import abort, Blueprint, jsonify, \
                   make_response, request, session
 import mysql.connector.pooling
+import json
 
 
 bp = Blueprint("apis_bp", __name__)
@@ -115,6 +116,10 @@ def get_attraction_by_id(attractionId):
             "longitude":  query_result[8],
             "images": [f"https://{url}" for url in query_result[9].split("https://")[1:]]
         }}
+
+        session["attraction_name"] = res["data"]["name"]
+        session["attraction_address"] = res["data"]["address"]
+        session["attraction_image"] = res["data"]["images"][0]
         
         return jsonify(res)
     else:
@@ -211,9 +216,9 @@ def signin_user():
 
 @bp.route("/api/user", methods=["DELETE"])
 def logout_user():
-    session["id"] = ''
-    session["name"] = ''
-    session["username"] = ''
+    session["id"] = None
+    session["name"] = None
+    session["username"] = None
     session["is_logging_in"] = False
 
     response = make_response(jsonify({"ok": True}), 200)   
@@ -221,7 +226,129 @@ def logout_user():
     return response
 
 
+@bp.route("/api/booking", methods=["GET"])
+def get_unbooking_schedule():
+    is_logging_in = session.get("is_logging_in", False)
+
+    if not is_logging_in:
+        abort(403, {"msg": "未登入系統，拒絕存取"})
+
+    query_cmd = '''
+        SELECT content FROM schedule
+        INNER JOIN member 
+        ON schedule.member_id=%(member_id)s limit 1;
+    ''' 
+    query_content = {
+        "member_id": session["id"],
+    }
+    query_result = query(query_cmd, query_content)
+
+    data = {"data": None}
+    if is_logging_in and query_result:
+        schedule = json.loads(query_result[0][0])["data"]
+
+        data["data"] = {
+            "attraction": {
+                "id": schedule["attraction"]["attraction_id"],
+                "name": schedule["attraction"]["attraction_name"],
+                "address": schedule["attraction"]["attraction_address"],
+                "image": schedule["attraction"]["attraction_image"]
+            },
+            "date": schedule["date"],
+            "time": schedule["time"],
+            "price": schedule["price"]
+        }
+
+    response = make_response(jsonify(data), 200)   
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@bp.route("/api/booking", methods=["POST"])
+def build_new_schedule():
+    req = request.json
+    attraction_id = req["attractionId"]
+    date = req["date"]
+    time = req["time"]
+    price = req["price"]
+
+    '''
+    Create this table first.
+
+        create table schedule (
+            id bigint auto_increment, 
+            member_id bigint not null,
+            content text not null, 
+            time datetime not null default (now()), 
+            primary key (id),
+            foreign key (member_id) references member (id)
+        );
+
+    '''
+
+    if date:
+        schedule = {
+            "data": {
+                "attraction": {
+                    "attraction_id": attraction_id,
+                    "attraction_name": session["attraction_name"],
+                    "attraction_address": session["attraction_address"],
+                    "attraction_image": session["attraction_image"]
+                },
+                "date": date,
+                "time": time,
+                "price":  price
+            }
+        }
+
+        session["attraction_name"] = ''
+        session["attraction_address"] = ''
+        session["attraction_image"] = ''
+
+        schedule_jsonify = json.dumps(schedule)
+
+        insert_cmd = '''
+        INSERT INTO schedule (member_id, content) 
+                    values (%(member_id)s, %(content)s);
+        ''' 
+        insert_content = {
+            "member_id": session["id"],
+            "content": schedule_jsonify
+        }
+        update(insert_cmd, insert_content)
+
+        response = make_response(jsonify({"ok": True}), 200)   
+        response.headers["Content-Type"] = "application/json"
+        return response
+    abort(400, {"msg": "未選擇預約日期"})
+
+
+@bp.route("/api/booking", methods=["DELETE"])
+def delete_current_schedule():
+    delete_cmd = '''
+    DELETE FROM schedule 
+    WHERE member_id=%(member_id)s;
+    ''' 
+    delete_content = {
+        "member_id": session["id"],
+    }
+    update(delete_cmd, delete_content)
+
+    response = make_response(jsonify({"ok": True}), 200)   
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
 @bp.errorhandler(400)
+def internal_server_error(error):
+    error_msg = {
+        "error": True,
+        "message": error.description["msg"]
+    }
+    return error_msg
+
+
+@bp.errorhandler(403)
 def internal_server_error(error):
     error_msg = {
         "error": True,

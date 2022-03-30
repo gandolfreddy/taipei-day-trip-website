@@ -4,9 +4,13 @@ function checkDayTime() {
 
     if (document.querySelector("#morning").checked) {
         cost.textContent = "新台幣 2000 元";
+        time = "morning";
     } else {
         cost.textContent = "新台幣 2500 元";
+        time = "afternoon";
     }
+
+    return time;
 }
 
 
@@ -166,6 +170,32 @@ function logOut() {
 }
 
 
+function book(urlId) {
+    let date = document.querySelector("#booking-date>input").value;
+    let time = checkDayTime();
+    let price = document.querySelector("#cost").textContent.replace(/\D/g, "");;
+
+    let data = {
+        "attractionId": urlId,
+        "date": date,
+        "time": time,
+        "price": price
+    };
+    
+    fetch("/api/booking", {
+        method: "POST",
+        headers: new Headers({"Content-Type": "application/json"}),
+        body: JSON.stringify(data)
+    }).then((response) => {
+        return response.json();
+    }).then((dataJson) => {
+        if (dataJson["ok"]) {
+            window.location = "/booking";
+        }
+    });
+}
+
+
 let images = null;
 let imageLength = 0;
 let previousImgNumber = 0;
@@ -203,6 +233,32 @@ btnSigninNSignup.addEventListener("click", function() {
         dialogSignup.style.display = "none";
     } else {
         logOut();
+    }
+});
+
+let btnBooking = document.querySelector("#btn-booking");
+btnBooking.addEventListener("click", function() {
+    if (btnSigninNSignup.textContent === "登入/註冊") {
+        dialogSection.style.display = "flex";
+        dialogSignin.style.animationName = "signin-block";
+        dialogSignin.style.animationDuration = "1s";
+        dialogSignin.style.display = "block";
+        dialogSignup.style.display = "none";
+    } else {
+        window.location = "/booking";
+    }
+});
+
+let startBookingBtn = document.querySelector("#booking-button");
+startBookingBtn.addEventListener("click", function() {
+    if (btnSigninNSignup.textContent === "登入/註冊") {
+        dialogSection.style.display = "flex";
+        dialogSignin.style.animationName = "signin-block";
+        dialogSignin.style.animationDuration = "1s";
+        dialogSignin.style.display = "block";
+        dialogSignup.style.display = "none";
+    } else {
+        book(urlId);
     }
 });
 

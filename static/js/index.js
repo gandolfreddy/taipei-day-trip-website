@@ -59,7 +59,7 @@ function searchKeyword() {
     queryAttractions(page, keyword);
 }
 
-/* new on week-4 */
+
 function checkLoginStatus() {
     fetch("/api/user").then((response) => {
         return response.json();
@@ -154,7 +154,6 @@ let noResult = document.querySelector("#no-result");
 let html = document.querySelector("html");
 let body = document.querySelector("body");
 let attractionsGroup = document.querySelector("#attractions-group");
-/* new on week-4 */
 let dialogSection = document.querySelector("#dialog-section");
 let dialogSignup = document.querySelector("#dialog-signup");
 let dialogSignin = document.querySelector("#dialog-signin");
@@ -172,7 +171,6 @@ keywordInput.addEventListener("keyup", function (event) {
         document.querySelector("#search-btn").onclick();
 });
 
-/* new on week-4 */
 let signinClose = document.querySelector("#signin-close");
 signinClose.addEventListener("click", function() {
     dialogSection.style.display = "none";
@@ -197,6 +195,19 @@ btnSigninNSignup.addEventListener("click", function() {
         dialogSignup.style.display = "none";
     } else {
         logOut();
+    }
+});
+
+let btnBooking = document.querySelector("#btn-booking");
+btnBooking.addEventListener("click", function() {
+    if (btnSigninNSignup.textContent === "登入/註冊") {
+        dialogSection.style.display = "flex";
+        dialogSignin.style.animationName = "signin-block";
+        dialogSignin.style.animationDuration = "1s";
+        dialogSignin.style.display = "block";
+        dialogSignup.style.display = "none";
+    } else {
+        window.location = "/booking";
     }
 });
 
