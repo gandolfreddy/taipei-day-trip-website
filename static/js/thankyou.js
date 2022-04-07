@@ -48,30 +48,22 @@ function showBookingInfo(order_number) {
         headline.textContent = `您好，${user_name}，行程資訊如下：` 
         
         if (data === null) {
-            html.style.height = "100%";
-            body.style.height = "100%";
             emptyState.style.display = "flex";
             section.style.display = "none";
             for (let i=0; i<hrs.length; i++) {
                 hrs[i].style.display = "none";
             }
             contactForm.style.display = "none";
-            footer.style.height = "100%";
-            footer.style.alignItems = "flex-start";
             footerText.style.margin = "45px 0px 0px";
 
             emptyState.textContent = `查無訂單編號 ${order_number} 的行程。`;
         } else {
-            html.style.height = "auto";
-            body.style.height = "auto";
             emptyState.style.display = "none";
             section.style.display = "flex";
             for (let i=0; i<hrs.length; i++) {
                 hrs[i].style.display = "block";
             }
             contactForm.style.display = "flex";
-            footer.style.height = "104px";
-            footer.style.alignItems = "center";
             footerText.style.margin = "0px";
 
             headline.textContent = `您好，${user_name}，行程資訊如下，祝您旅途愉快：`
