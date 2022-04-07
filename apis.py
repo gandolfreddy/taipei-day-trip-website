@@ -1,8 +1,11 @@
+from datetime import datetime
 from decouple import config
 from flask import abort, Blueprint, jsonify, \
                   make_response, request, session
 import mysql.connector.pooling
 import json
+import requests
+
 
 
 bp = Blueprint("apis_bp", __name__)
@@ -35,11 +38,13 @@ def query(cmd, content):
 
 
 def update(cmd, content):
+    update_result = False
     try:
         cnx = cnx_pool.get_connection()
         cursor = cnx.cursor()
         cursor.execute(cmd, content)
         cnx.commit()
+        update_result = True
     except:
         cnx.rollback()
     finally:
@@ -47,6 +52,7 @@ def update(cmd, content):
             cursor.close()
         if cnx:
             cnx.close()
+        return update_result
 
 
 @bp.route("/api/attractions", methods=["GET"])
@@ -335,6 +341,212 @@ def delete_current_schedule():
     update(delete_cmd, delete_content)
 
     response = make_response(jsonify({"ok": True}), 200)   
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@bp.route("/api/orders", methods=["POST"])
+def create_new_order():
+    is_logging_in = session.get("is_logging_in", False)
+    if not is_logging_in:
+        abort(403, {"msg": "未登入系統，拒絕存取"})
+
+    '''req
+    {
+        "prime": "前端從第三方金流 TapPay 取得的交易碼",
+        "order": {
+            "price": 2000,
+            "trip": {
+                "attraction": {
+                    "id": 10,
+                    "name": "平安鐘",
+                    "address": "臺北市大安區忠孝東路 4 段",
+                    "image": "https://yourdomain.com/images/attraction/10.jpg"
+                },
+                "date": "2022-01-31",
+                "time": "afternoon"
+            },
+            "contact": {
+                "name": "彭彭彭",
+                "email": "ply@ply.com",
+                "phone": "0912345678"
+            }
+        }
+    }
+    '''
+    req = request.json
+    contact_phone = req["order"]["contact"]["phone"]
+    contact_name = req["order"]["contact"]["name"]
+    contact_email = req["order"]["contact"]["email"]
+    if not (contact_phone and contact_name and contact_email):
+        abort(400, {"msg": "訂單建立失敗，請輸入完整聯絡資訊"})
+    
+    '''tappay_req_body
+    {
+        "prime": String,
+        "partner_key": String,
+        "merchant_id": "merchantA",
+        "amount": 100,
+        "details":"TapPay Test",
+        "cardholder": {
+            "phone_number": "+886923456789",
+            "name": "王小明",
+            "email": "LittleMing@Wang.com"
+        }
+    }
+    '''
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    tappay_req_body = {
+        "prime": req["prime"],
+        "partner_key": config("PARTNER_KEY"),
+        "merchant_id": "gandolfreddy_CTBC",
+        # "merchant_id": "gandolfreddy_EASY_WALLET", ## for testing fail to pay
+        "amount": req["order"]["price"],
+        "details": f"{timestamp}",
+        "cardholder": {
+            "phone_number": contact_phone,
+            "name": contact_name,
+            "email": contact_email
+        }
+    }
+
+    '''data
+    {
+        "data": {
+            "number": "20210425121135",
+            "payment": {
+                "status": 0,
+                "message": "付款成功"
+            }
+        }
+    }
+    '''
+    data = {
+        "data": {
+            "number": f"{timestamp}",
+            "payment": {
+                "status": 1, ## for not paid yet
+                "message": ""
+            }
+        }
+    }
+    
+    url = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": config("PARTNER_KEY"),
+    }
+    tappay_res = requests.post(url, json=tappay_req_body, headers=headers).json()
+
+    '''tappay_res
+    {
+        'status': 0, 
+        'msg': 'Success', 
+        'amount': 2000, 
+        'acquirer': 'TW_TAISHIN', 
+        'currency': 'TWD', 
+        'rec_trade_id': 'D20220406FrCIQx', 
+        'bank_transaction_id': 'TP20220406FrCIQx', 
+        'order_number': '', 
+        'auth_code': '085289', 
+        'card_info': {
+            'issuer': '', 
+            'funding': 0, 
+            'type': 1, 
+            'level': '', 
+            'country': 'UNITED KINGDOM', 
+            'last_four': '4242', 
+            'bin_code': '424242', 
+            'issuer_zh_tw': '', 
+            'bank_id': '', 
+            'country_code': 'GB'
+        }, 
+        'transaction_time_millis': 1649270426071, 
+        'bank_transaction_time': {
+            'start_time_millis': '1649270426114', 
+            'end_time_millis': '1649270426114'
+        }, 
+        'bank_result_code': '', 
+        'bank_result_msg': '', 
+        'card_identifier': '4bb1f87f3e0d40b1be156560fdf1c1e9', 
+        'merchant_id': 'gandolfreddy_TAISHIN', 
+        'is_rba_verified': False, 
+        'transaction_method_details': {
+            'transaction_method_reference': 'REQUEST', 
+            'transaction_method': 'FRICTIONLESS'
+        }
+    }
+    '''
+    if tappay_res["status"] == 0:
+        '''Create this table first.
+
+            create table orders (
+                id bigint auto_increment, 
+                order_id bigint not null,
+                content text not null, 
+                time datetime not null default (now()), 
+                primary key (id)
+            );
+
+        '''
+        data["data"]["payment"]["status"] = 0
+        data["data"]["payment"]["message"] = "付款成功"
+
+        order_jsonify = json.dumps({
+            "number": data["data"]["number"],
+            "price": req["order"]["price"],
+            "trip": req["order"]["trip"],
+            "contact": req["order"]["contact"],
+            "status": data["data"]["payment"]["status"]
+        })
+
+        insert_cmd = '''
+        INSERT INTO orders (order_id, content) 
+                    values (%(order_id)s, %(content)s);
+        ''' 
+        insert_content = {
+            "order_id": data["data"]["number"],
+            "content": order_jsonify
+        }
+        if update(insert_cmd, insert_content):
+            delete_cmd = '''
+            DELETE FROM schedule 
+            WHERE member_id=%(member_id)s;
+            ''' 
+            delete_content = {
+                "member_id": session["id"],
+            }
+            update(delete_cmd, delete_content)
+    else:
+        data["data"]["payment"]["status"] = 1
+        data["data"]["payment"]["message"] = "付款失敗"
+
+    response = make_response(jsonify(data), 200)
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+@bp.route("/api/order/<orderNumber>", methods=["GET"])
+def get_order_detail(orderNumber):
+    order_number = orderNumber
+    is_logging_in = session.get("is_logging_in", False)
+    if not is_logging_in:
+        abort(403, {"msg": "未登入系統，拒絕存取"})
+
+    query_cmd = '''
+        SELECT content FROM orders
+        WHERE order_id=%(order_id)s limit 1;
+    ''' 
+    query_content = {
+        "order_id": order_number,
+    }
+    query_result = query(query_cmd, query_content)
+
+    data = {"data": None}
+    if query_result:
+        data["data"] = json.loads(query_result[0][0])
+
+    response = make_response(jsonify(data), 200)   
     response.headers["Content-Type"] = "application/json"
     return response
 
