@@ -301,3 +301,8 @@ hr {
 
 @media (max-width: 360px) {
 }
+
+/* pointer */
+.pointer {
+    cursor: pointer;
+}

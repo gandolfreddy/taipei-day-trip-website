@@ -585,3 +585,8 @@ hr {
         margin-bottom: 110px;
     }
 }
+
+/* pointer */
+.pointer {
+    cursor: pointer;
+}
