@@ -14,7 +14,7 @@
         <div id="dialog-mask"></div>
         <div id="dialog-signin">
             <div class="decorator-bar"></div>
-            <div id="signin-close">
+            <div class="pointer" id="signin-close">
                 <img src="{{url_for('static', filename='assets/icon_close.png')}}">
             </div>
             <div id="signin-main">
@@ -22,15 +22,15 @@
                 <div id="signin-form">
                     <input id="signin-email" type="text" placeholder="輸入電子信箱" required>
                     <input id="signin-pswd" type="password" placeholder="輸入密碼" required>
-                    <button id="signin-button">登入帳戶</button>
+                    <button class="pointer" id="signin-button">登入帳戶</button>
                 </div>
                 <div id="signin-msg"></div>
-                <div id="change-to-signup-text">還沒有帳戶？點此註冊</div>
+                <div class="pointer" id="change-to-signup-text">還沒有帳戶？點此註冊</div>
             </div>
         </div>
         <div id="dialog-signup">
             <div class="decorator-bar"></div>
-            <div id="signup-close">
+            <div class="pointer" id="signup-close">
                 <img src="{{url_for('static', filename='assets/icon_close.png')}}">
             </div>
             <div id="signup-main">
@@ -39,10 +39,10 @@
                     <input id="signup-name" type="text" placeholder="輸入姓名" required>
                     <input id="signup-email" type="text" placeholder="輸入電子郵件" required>
                     <input id="signup-pswd" type="password" placeholder="輸入密碼" required>
-                    <button id="signup-button">註冊新帳戶</button>
+                    <button class="pointer" id="signup-button">註冊新帳戶</button>
                 </div>
                 <div id="signup-msg"></div>
-                <div id="change-to-signin-text">已經有帳戶了？點此登入</div>
+                <div class="pointer" id="change-to-signin-text">已經有帳戶了？點此登入</div>
             </div>
         </div>
     </div>
@@ -51,8 +51,8 @@
         <div id="inner-nav">
             <a href="/">台北一日遊</a>
             <div id="nav-btns">
-                <button id="btn-booking">預定行程</button>
-                <button id="btn-signin-n-signup">登入/註冊</button>
+                <button class="pointer" id="btn-booking">預定行程</button>
+                <button class="pointer" id="btn-signin-n-signup">登入/註冊</button>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
 
             <div id="search">
                 <input type="text" placeholder="輸入景點名稱查詢" id="keyword">
-                <button id="search-btn" onclick="searchKeyword();">
+                <button class="pointer" id="search-btn" onclick="searchKeyword();">
                     <img src="{{url_for('static', filename='assets/icon_search.png')}}" alt="search">
                 </button>
             </div>

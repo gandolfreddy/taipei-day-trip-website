@@ -470,3 +470,8 @@ a {
         top: 50%;
     }
 }
+
+/* pointer */
+.pointer {
+    cursor: pointer;
+}
